@@ -44,7 +44,7 @@ jobs:
 
           days_left = working_days_between(today, last_workday)
 
-          if True:
+          if days_left == 4:
               webhook = os.environ["SLACK_WEBHOOK_URL"]
               message = {
                   "text": "Hi everyone — just a gentle reminder that month end is approaching. Please could all cardholders ensure any outstanding invoices are uploaded to Pleo at your earliest convenience. Thanks so much!"
