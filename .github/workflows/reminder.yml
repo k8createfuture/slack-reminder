@@ -10,12 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send Slack message if needed
+      - name: Run script
         run: |
           python <<EOF
           import datetime
-          import requests
           import os
+          import requests
 
           def is_workday(d):
               return d.weekday() < 5
@@ -44,7 +44,7 @@ jobs:
 
           days_left = working_days_between(today, last_workday)
 
-         if True:
+          if True:
               webhook = os.environ["SLACK_WEBHOOK_URL"]
               message = {
                   "text": "Reminder: please add invoices to the system — month end is approaching."
