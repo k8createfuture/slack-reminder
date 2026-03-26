@@ -1,0 +1,55 @@
+name: Month End Reminder
+
+on:
+  schedule:
+    - cron: "0 9 * * 1-5"
+  workflow_dispatch:
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Slack message if needed
+        run: |
+          python <<EOF
+          import datetime
+          import requests
+          import os
+
+          def is_workday(d):
+              return d.weekday() < 5
+
+          def get_last_workday(year, month):
+              if month == 12:
+                  next_month = datetime.date(year+1,1,1)
+              else:
+                  next_month = datetime.date(year,month+1,1)
+              d = next_month - datetime.timedelta(days=1)
+              while not is_workday(d):
+                  d -= datetime.timedelta(days=1)
+              return d
+
+          def working_days_between(start, end):
+              count = 0
+              d = start
+              while d < end:
+                  if is_workday(d):
+                      count += 1
+                  d += datetime.timedelta(days=1)
+              return count
+
+          today = datetime.date.today()
+          last_workday = get_last_workday(today.year, today.month)
+
+          days_left = working_days_between(today, last_workday)
+
+          if days_left == 4:
+              webhook = os.environ["SLACK_WEBHOOK_URL"]
+              message = {
+                  "text": "Reminder: please add invoices to the system — month end is approaching."
+              }
+              requests.post(webhook, json=message)
+          EOF
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
