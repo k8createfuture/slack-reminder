@@ -44,7 +44,7 @@ jobs:
 
           days_left = working_days_between(today, last_workday)
 
-          if days_left == 4:
+         if True:
               webhook = os.environ["SLACK_WEBHOOK_URL"]
               message = {
                   "text": "Reminder: please add invoices to the system — month end is approaching."
